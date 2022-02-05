@@ -1,0 +1,6 @@
+https://github.com/ggeop/Job-Recommendation-Engine.git
+https://github.com/vgangaprasad/ML_Skills_Match.git
+https://github.com/Jwata/job-word-embeddings.git
+https://github.com/duyet/skill2vec.git
+https://github.com/duyet/skill2vec-dataset.git
+https://github.com/duyet/related-skills.git
