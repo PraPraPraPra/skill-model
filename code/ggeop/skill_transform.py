@@ -1,22 +1,27 @@
+import re
+
 def skill_transform(skill, remove_stopwords = True):
     
-    skill = skill.replace("_", " ").split()
-    skill = " ".join([sk for sk in skill if sk])
     
     skill = re.sub(r"\(.*\)", "", skill)
     skill = skill.replace("-", "") \
-        .replace(".", "") \
-        .replace(",", "") \
-        .replace("-", "") \
-        .replace(":", "") \
-        .replace("(", "") \
-        .replace(")", "") \
-        .replace(u"åá", "") \
-        .replace(u"&", "and") \
         .replace(" js", "js") \
         .replace("-js", "js") \
         .replace("_js", "js") \
         .replace("java script", "js") 
+
+
+    #Remove stopwords
+    filtered_words = []
+    stopwords_dict = {key : "" for key in stopwords.words('english')}
+    for job in lem:
+    filtered_words.append([j for j in job if not j in stopwords_dict])
+
+    cleaned_description=[]
+    no_punctuation_dict = {key : "" for key in ['(',')','.',',',':','%']}
+    split_slash_dict = {key : " " for key in ['/']}
+    for job in filtered_words:
+        cleaned_description.append([j for j in job if not j in extra_dict])
     
     skill = skill.lower()
     
@@ -24,7 +29,7 @@ def skill_transform(skill, remove_stopwords = True):
     special_case = {}
     special_case["javascript"] = [ "js", "java script", "javascripts", "java scrip" ]
     special_case["wireframe"] = [ "wireframes", "wire frame", "wire frames", "wire-frame", "wirefram", "wire fram", "wireframing" ]
-    special_case["oop"] = [  "object oriented", "object oriented programming", ]
+    special_case["oop"] = [ "object oriented programming" ]
     special_case["ood"] = [ "object oriented design", ]
     special_case["olap"] = [ "online analytical processing",  ]
     special_case["ecommerce"] = [ "e commerce",  ]
@@ -83,3 +88,5 @@ def skill_transform(skill, remove_stopwords = True):
     skill = re.sub('js$','', skill)
     
     return skill
+
+    
