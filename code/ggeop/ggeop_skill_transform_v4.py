@@ -49,7 +49,7 @@ def skill_transform(data):
     #Synonym:
     # Special cases replace
     special_case = {}
-    special_case["javascript"] = [ "java script" ]
+    special_case["javascript"] = [ "java script ", "java script." ]
     #special_case["wireframe"] = [ "wireframes", "wire frame", "wire frames", "wire-frame", "wirefram", "wire fram", "wireframing" ]
     special_case["ood"] = [ "object oriented design", ]
     special_case["oop"] = [ "object oriented programming", ]
@@ -73,13 +73,16 @@ def skill_transform(data):
     #Create Job description list
     job_descriptions=[]
     for job in data.Description:
-        j = job.replace(',', '')
+        j = job.replace(',', ' ')
         i = j.replace('/', ' ')
-        k = i.lower()
+        l = i.replace('\\', ' ')
+        k = l.lower()
         for root_skill in special_case:
             for synonym in special_case[root_skill]:
-                k.replace(synonym, root_skill)
-
+                #new_line = k.replace(synonym, root_skill)
+                #if new_line != k:
+                #    print(k.replace(synonym, root_skill.upper()))
+                k = k.replace(synonym, root_skill)
         job_descriptions.append(k)
 
     #Remove Capitalization
