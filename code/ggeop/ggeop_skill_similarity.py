@@ -55,7 +55,7 @@ data = pd.read_csv('data/ggeop/JobsDataset.csv', header = 0, names = ['Query', '
 # Assumo size is now vector_size....
 
 #Mudeio window_size para englobar a oferta toda - Funciona muito melhor!!!
-model = Word2Vec(cleaned_description , vector_size=100, window=max_size, min_count=5, workers=4)
+model = Word2Vec(cleaned_description , vector_size=100, window=max_size, min_count=5, workers=6)
 #model = Word2Vec(cleaned_description , vector_size=100, window=100, min_count=5, workers=4) #teste com window=100
 
 #model = Word2Vec(cleaned_description , vector_size=100, window=5, min_count=5, workers=4)
@@ -68,7 +68,7 @@ model = Word2Vec(cleaned_description , vector_size=100, window=max_size, min_cou
 #Skills Similarity
 with open(f'data/ggeop/answer_{version}.txt', 'w') as f:            
 
-    for seed_word in [ 'python', 'java', 'data', 'c', 'html']:
+    for seed_word in [ 'python', 'java', 'data', 'c', 'html', 'javascript', 'angular']:
         answer = model.wv.most_similar(positive=[seed_word], topn=10)
 
         print(seed_word, answer)

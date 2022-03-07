@@ -9,16 +9,21 @@ from nltk.stem import WordNetLemmatizer
 
 from gensim.test.utils import common_texts, get_tmpfile
 
-
+#--------------------------------------------!ATTENTION!---------------------------------------------
+#----------------------------------------!FIRST TIME RUNNING!----------------------------------------
 # The first time using nltk, you should run:
-# import nltk
-# nltk.download()
+#           import nltk
+#           nltk.download()
 # ---- OR ----
-# import nltk
-# nltk.download('punkt')
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')
-# nltk.download('stopwords')
+#           import nltk
+#           nltk.download('punkt')
+#           nltk.download('wordnet')
+#           nltk.download('omw-1.4')
+#           nltk.download('stopwords')
+#----------------------------------------!FIRST TIME RUNNING!----------------------------------------
+#--------------------------------------------!ATTENTION!---------------------------------------------
+
+
 
 
 
@@ -32,30 +37,36 @@ Erros na lematização:
 
 """
 
+#----------------------------------------------!INTRO!-----------------------------------------------
+#----------------------------------------------------------------------------------------------------
+# This method receives the dava (read from a csv) and transforms it so that it's in a more usefull
+# state for Word2Vec.
+#
+# It follows the following sequence:
+#   1- Replace most of the symbols found in the dataset with a whitespace " ".
+#       This is usefull for reducing the number of total words in the full vocabulary.
+#   2- Uses a hand-crafted synonym list for some skills present in the dataset.
+#       This is needed because "angular", "angular2" and "angular5 all represent the same skill.
+#       Word2Vec has no way to know that these words are actually the same skill.
+#       A possible alternative is to use lemmatization, but this lead to other problems in our
+#       initial approach. We left the code
+#   3- 
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------!INTRO!-----------------------------------------------
 def skill_transform(data):
 
-    """
-    1.- Transformar em Lista, com 1 linha por elemento da lista ["primeira coisa blah", "Depois blah blah blah", (...)], retirando as virgulas;
-    2.- Separar em Tokens ex: [["primeira", "coisa", blah"], ["Depois", "blah", "blah", blah"]];
-    3.- Por tudo em lower case;
-    4.- Lematizar;
-    5.- Tirar stop-words;
-    6.- Substituir símbolos;
-    7.- Gravar num ficheiro o numero de ocurrencias;
-    """
-
-    version = "v4"
+    # Replace the version number so that the output is stored in a different named file.
+    # Otherwise, it overrides the last file with the same version
+    version = "v7"
 
     #Synonym:
     # Special cases replace
     special_case = {}
     special_case["javascript"] = [ "java script ", "java script." ]
-    #special_case["wireframe"] = [ "wireframes", "wire frame", "wire frames", "wire-frame", "wirefram", "wire fram", "wireframing" ]
     special_case["ood"] = [ "object oriented design", ]
     special_case["oop"] = [ "object oriented programming", ]
     special_case["olap"] = [ "online analytical processing" ]
     special_case["ecommerce"] = [ "e commerce" ]
-    #special_case["consultant"] = [ "consulting"  ]
     special_case["ux"] = [ "user experience", "web user experience design", "user experience design", "ux designer", "user experience/ux" ]
     special_case["html5"] = [ "html 5" ]
     special_case["j2ee"] = [ "jee" ]
@@ -68,34 +79,46 @@ def skill_transform(data):
     special_case["nlp"] = [ "natural language process", "natural language", "nltk" ]
     special_case["aws"] = [ "amazon web service"]
     special_case["java"] = [ "java ee"]
+    special_case["angular"] = ["angularjs", "angular2", "angular5", "angular", "angular.js", "angular2+", "angularjs-"]
+    special_case["backend"] = ["back-end", "back- end", "back end"]
+    special_case["frontend"] = ["front-end", "front- end", "front end"]
+    special_case["springboot"] = ["spring-boot", "spring boot"]
 
 
-    #Create Job description list
+    # Create Job description list;
+    # Each element of the List will be a a single job description in the form: [ [[first], [job], [description]], [[2nd], [job], [here]], ...]
     job_descriptions=[]
+
+    #Replace symbols; Each "job" is a single job description.
     for job in data.Description:
         j = job.replace(',', ' ')
         i = j.replace('/', ' ')
-        l = i.replace('\\', ' ')
-        k = l.lower()
+        l = i.replace(';', ' ')
+        m = l.replace('%', ' ')
+        n = m.replace('(', ' ')
+        o = n.replace(')', ' ')
+        p = o.replace('. ', ' ') # This has to be ". " (a full stop) and not "." because skills like .net and D3.js are valid skill names.
+        q = p.replace(' - ', ' ')
+        r = q.replace(' -- ', ' ')
+
+        x = r.replace('\\', ' ')
+
+        # Quick way to translate multiple whitespaces to a single whitespace.
+        z = " ".join(x.split())
+
+        # Everything to lowercase (reduces the total vocab size: JavaScript is the same as Javascript and javascript).
+        k = z.lower()
+
+        # Iterate through the hand-crafted synonym list and replace each term with its canonnical form.
         for root_skill in special_case:
             for synonym in special_case[root_skill]:
-                #new_line = k.replace(synonym, root_skill)
-                #if new_line != k:
-                #    print(k.replace(synonym, root_skill.upper()))
                 k = k.replace(synonym, root_skill)
+
+        # Add complete description to job_description list.
         job_descriptions.append(k)
 
-    #Remove Capitalization
-    #no_capitals =[]
-    #for job in job_descriptions:
-    #    no_capitals.append([j.lower() for j in job])
 
-
-
-
-
-
-    #Words tokenization
+    #Words tokenization (using nltk)
     jobs = [word_tokenize(d) for d in job_descriptions]
 
 
@@ -116,22 +139,22 @@ def skill_transform(data):
 
 
     #Remove symbols
-    cleaned_description=[]
-    extra_dict = {key : "" for key in ['(',')','.',',',':','%']}
-    for job in filtered_words:
-        cleaned_description.append([j for j in job if not j in extra_dict])
+    #cleaned_description=[]
+    #extra_dict = {key : "" for key in ['(',')','.',',',':','%', ';']}
+    #for job in filtered_words:
+    #    cleaned_description.append([j for j in job if not j in extra_dict])
 
 
 
     from collections import Counter
 
-    count = Counter(x for xs in cleaned_description for x in set(xs))
+    count = Counter(x for xs in filtered_words for x in set(xs))
     ordered_count_list = count.most_common()
 
     with open(f'data/ggeop/counter_{version}.txt', 'w') as f:
         for item in ordered_count_list:
             f.write(f'{item[0]} : {item[1]}\n')
 
-    max_size = len(max(cleaned_description, key=len))
+    max_size = len(max(filtered_words, key=len))
 
-    return (cleaned_description, max_size, version)
+    return (filtered_words, max_size, version)

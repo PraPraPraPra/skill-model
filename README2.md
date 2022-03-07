@@ -41,12 +41,83 @@ O Elasticsearch tem uma funcionalidade que nos permite utilizar um modelo pré-t
 
 O Elasticsearch oferece vários modelos já treinados que podem ser usados para calcular este grau de próximidade. No entanto, como procuram ser modelos generalizados não conseguem capturar as diferenças várias tecnologias diferentes (conseguem perceber que "C++" está mais perto de "Java" do que de "lavatório" mas não têm noção das relações entre as várias tecnologias onde, por exemplo, "Python" e "Flask" teriam de estar sempre mais próximos do que "Python" e "PowerPoint").
 
+# File Structure
 
 
-Python --version:
-python 3.8.10
+
+This project is (mainly) split into 5 responsabilities:
+ - Processing and transforming the dataset (so that you can efficiently use it for the NLP model); -> **skill_transform.py**
+ - Training the NLP model; -> **skill_similarity.py**
+ - Creating an Elasticsearch index with the proper mapping; -> **elastic_main.py**
+ - Uploading new data to the Elasticsearch index; -> **TODO TO DO  MISSING**
+ - Retrieve data from the Elasticsearch index; -> **elastic_query.py**
 
 
+```
+project
+|   requirements.txt
+|   requirements_elastic.txt
+|   requirements_nlp.txt
+|---code
+    | skill_similarity.py
+    | skill_transform.py
+    | elastic_main.py
+    | elastic_query.py
+|---scripts
+    | first-run.sh
+    | elastic.sh
+    | kibana.sh
+
+
+```
+
+# Instalation
+
+
+This requires python 3.8. It has not been tested with other python versions.
+
+```
+  Python --version:
+    python 3.8.10
+```
+
+**If** you want to run the whole project you should pip install "requirements.txt" using the terminal:
+
+```
+pip install -r requirements.txt
+```
+
+**If** you only want to run the Elasticsearch or the NLP part of the project, you can *pip install* the corresponding *requirements_...*  using the terminal:
+
+```
+pip install -r requirements_nlp.txt
+```
+**OR**
+```
+pip install -r requirements_elasticsearch.txt
+```
+
+**If** you're using Elasticsearch, you should also download and run the corresponding docker images (for elasticsearch and kibana):
+
+For elasticsearch:
+```
+docker pull elasticsearch
+```
+For kibana *(In short: Run first-run.sh; Pull the docker kibana image with `docker pull docker.elastic.co/kibana/kibana:8.0.1`)*:
+```
+Follow: https://www.elastic.co/guide/en/kibana/current/docker.html
+```
+
+
+# Usage
+
+For Elasticsearch and Kibana, you should first run **elastic.sh** and then **kibana.sh**.
+
+For NLP, **first check the comments at the start of skill_transform.py**. After that, all you have to do is run **skill_similarity.py**.
+
+
+
+# Bibliography
 Bibliografia de vários outros projectos:
 
     https://github.com/ggeop/Job-Recommendation-Engine.git
