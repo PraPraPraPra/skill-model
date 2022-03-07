@@ -1,0 +1,13 @@
+base:
+3754055 -> 3445526
+
+v1 (sem "/"):
+3773512 -> 3477504
+
+sem "/" e sem lemmatization:
+3769609 -> 3531796
+
+Com a troca de palavras... Claramente que deu asneira
+18827485 -> 17646609
+
+3767739 -> 3532620 effective words
